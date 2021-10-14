@@ -1,1 +1,1 @@
-# CS-146-Introduction-to-Data-Structures
+# CS-46B-Introduction-to-Data-Structures
