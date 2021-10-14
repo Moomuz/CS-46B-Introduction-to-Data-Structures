@@ -1,0 +1,223 @@
+package sudoku;
+
+import java.util.*;
+
+
+public class Grid 
+{
+	private int[][]						values;
+
+
+	//
+	// DON'T CHANGE THIS.
+	//
+	// Constructs a Grid instance from a string[] as provided by TestGridSupplier.
+	// See TestGridSupplier for examples of input.
+	// Dots in input strings represent 0s in values[][].
+	//
+	public Grid(String[] rows)
+	{
+		values = new int[9][9];
+		for (int j=0; j<9; j++)
+		{
+			String row = rows[j];
+			char[] charray = row.toCharArray();
+			for (int i=0; i<9; i++)
+			{
+				char ch = charray[i];
+				if (ch != '.')
+					values[j][i] = ch - '0';
+			}
+		}
+	}
+
+	//
+	// DON'T CHANGE THIS.
+	//
+	public String toString()
+	{
+		String s = "";
+		for (int j=0; j<9; j++)
+		{
+			for (int i=0; i<9; i++)
+			{
+				int n = values[j][i];
+				if (n == 0)
+					s += '.';
+				else
+					s += (char)('0' + n);
+			}
+			s += "\n";
+		}
+		return s;
+	}
+
+
+	//
+	// DON'T CHANGE THIS.
+	// Copy ctor. Duplicates its source. You’ll call this 9 times in next9Grids.
+	//
+	Grid(Grid src)
+	{
+		values = new int[9][9];
+		for (int j=0; j<9; j++)
+			for (int i=0; i<9; i++)
+				values[j][i] = src.values[j][i];
+	}
+
+	// Finds an empty cell in the grid and creates 9 other grids with the numbers 1 through 9 in that empty cell.
+	// @return the ArrayList<Grid> that holds all 9 of the grids with numbers 1 through 9 in the empty cell.
+	public ArrayList<Grid> next9Grids()
+	{		
+		int xOfNextEmptyCell = -1;
+		int yOfNextEmptyCell = -1;
+
+		if(isFull())
+		{
+			return null;
+		}
+		else
+		{
+			// Find x,y of an empty cell.
+			for(int row = 0; row < values.length; row++)
+			{
+				for(int col = 0; col < values[row].length; col++)
+				{
+					if(values[row][col] == 0)
+					{
+						xOfNextEmptyCell = col;
+						yOfNextEmptyCell = row;
+						break;
+
+					}
+				}
+			}
+
+			// Construct array list to contain 9 new grids.
+			ArrayList<Grid> grids = new ArrayList<Grid>();
+
+			// Create 9 new grids as described in the comments above. Add them to grids.
+			for(int x = 1; x <= 9; x++)
+			{
+				Grid newGrid = new Grid(this);
+				newGrid.values[yOfNextEmptyCell][xOfNextEmptyCell] = x;
+				grids.add(newGrid);
+			}
+			return grids;
+		}
+	}
+
+	// Checks the board if there are any repeated numbers in the rows, columns, and 3x3.
+	// @return true if there are no repeating numbers and false if there are repeating numbers.
+	public boolean isLegal()
+	{
+		int[] listOfNum;
+
+		// Checks every row. If an illegal row, return false.
+		for(int row = 0; row < values.length; row++)
+		{
+			listOfNum = new int[9];
+			for(int col = 0; col < values[row].length; col++)
+			{
+				listOfNum[col] = values[row][col];
+				if(repeated(listOfNum))
+				{
+					return false;
+				}
+			}
+		}
+
+		// Checks every column. If an illegal column, return false.
+		for(int row = 0; row < values.length; row++)
+		{
+			listOfNum = new int[9];
+			for(int col = 0; col < values[row].length; col++)
+			{
+				listOfNum[col] = values[col][row];
+				if(repeated(listOfNum))
+				{
+					return false;
+				}
+			}
+		}
+		
+		// Check every block. If an illegal block, return false.
+		for(int i = 0; i < values.length; i = i +3) 
+		{
+			listOfNum = new int[9];
+			for(int j = 0; j < values[i].length; j = j + 3) 
+			{
+				int temp = 0;
+				for(int row = i;row < i + 3; row++) 
+				{
+					for(int col = j;col < j + 3;col++) 
+					{
+						listOfNum[temp] = values[row][col];
+						temp++;
+					}
+				}
+				if(repeated(listOfNum)) 
+				{
+					return false;
+				}
+			}
+		}
+
+		// All rows/cols/blocks are legal.
+		return true;
+	}
+
+	// Checks for any repeated number in the array.
+	// @param input is the desired array to be checked for repeating numbers
+	// @return true if there is a repeating number and false if there are no repeating numbers.
+	public static boolean repeated(int[] input)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			int tempNum = input[i];
+			for(int j = i + 1; j <= 8; j++)
+			{
+				if(tempNum == input[j] && tempNum != 0)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// Checks if every space in the board has a number 1 through 9 and not 0.
+	// @return true if every space on the board is full  and false if the board still has empty spaces.
+	public boolean isFull()
+	{
+		for(int row = 0; row < values.length; row++)
+		{
+			for(int col = 0; col < values[row].length; col++)
+			{
+				if(values[row][col] == 0)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	// Checks if two boards are the equal to each or not.
+	// @return true if x is equal to this and false if not.
+	public boolean equals(Object x)
+	{
+		Grid g = (Grid)x;
+		for(int row = 0; row < values.length; row++)
+		{
+			for(int col  = 0; col < values[row].length; col++)
+			{
+				if(this.values[row][col] != g.values[row][col])
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+}

@@ -1,0 +1,51 @@
+package dna;
+
+import java.io.*;
+
+
+//
+// Reads lines from a BufferedReader and builds a FastqRecord.
+//
+
+
+public class FastqReader 
+{
+	private BufferedReader theBufferedReader;
+	
+	public FastqReader(BufferedReader theBufferedReader)
+	{
+		this.theBufferedReader = theBufferedReader;
+	}
+	
+	// Returns next record in the file, or null if EOF (end-of-file).
+	public FastqRecord readRecord() throws IOException, RecordFormatException
+	{
+		if(this.theBufferedReader.readLine() == null)				//first checks for end of file
+		{
+			return null;
+		}
+		else
+		{
+			String defline = this.theBufferedReader.readLine();		//if not, reads next 3 lines 
+			if(defline.charAt(0) != '@')
+			{
+				throw new RecordFormatException("Bad 1st char in defline in fastq record: saw " + defline.charAt(0) + ", expected @");
+			}
+			String sequence = this.theBufferedReader.readLine();	//assigns each line to defline, sequence, quality
+			if(!sequence.contains("A") || 
+			   !sequence.contains("C") ||
+			   !sequence.contains("G") ||
+			   !sequence.contains("T"))
+			{
+				throw new RecordFormatException("Bad 1st char in defline in fastq record: saw " + defline.charAt(0) + ", expected @");
+			}
+			this.theBufferedReader.readLine();						//skips "+"
+			String quality = this.theBufferedReader.readLine();
+			if(quality.contains("!") || quality.contains("#"))
+			{
+				throw new RecordFormatException("Bad 1st char in defline in fastq record: saw " + defline.charAt(0) + ", expected @");
+			}
+			return new FastqRecord(defline, sequence, quality);		//constructs and returns FastqRecord using assigned String vars
+		}
+	}
+}

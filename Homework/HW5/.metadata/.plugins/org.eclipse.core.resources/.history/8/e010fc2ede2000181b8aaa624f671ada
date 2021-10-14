@@ -1,0 +1,43 @@
+package dna;
+
+import java.io.*;
+
+
+//
+// Reads lines from a BufferedReader and builds a FastqRecord.
+//
+
+
+public class FastqReader 
+{
+	private BufferedReader theBufferedReader;
+	
+	public FastqReader(BufferedReader theBufferedReader)
+	{
+		this.theBufferedReader = theBufferedReader;
+	}
+	
+	// Returns next record in the file, or null if EOF (end-of-file).
+	public FastqRecord readRecord() throws IOException, RecordFormatException
+	{
+		if(this.theBufferedReader.readLine() == null)
+		{
+			return null;
+		}
+		else
+		{
+			String defline = this.theBufferedReader.readLine();
+			String sequence = this.theBufferedReader.readLine();
+			this.theBufferedReader.readLine();		//skips "+"
+			String quality = this.theBufferedReader.readLine();
+			return new FastqRecord(defline, sequence, quality);
+		}
+		// Read the defline from the BufferedReader. Return null if you read null, 
+		// indicating end of file.
+
+		
+		// Read the next 3 lines from the buffered reader. Construct and return
+		// a FastqRecord.
+
+	}
+}

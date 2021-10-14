@@ -1,0 +1,30 @@
+package dna;
+
+import java.io.*;
+
+public class FastaWriter 
+{
+	private PrintWriter thePrintWriter;
+	
+	public FastaWriter(PrintWriter thePrintWriter)
+	{
+		this.thePrintWriter = thePrintWriter;
+	}
+	
+	//gets defline and sequence from FastaRecord and prints them on separate lines
+	public void writeRecord(FastaRecord rec) throws IOException
+	{
+		thePrintWriter.println(">" + rec.getDefline().substring(1));
+		thePrintWriter.println(rec.getSequence());
+	}
+	
+	public static void main(String[] args) throws IOException
+	{
+		File test = new File("data/test.fastq");
+		FileReader fr = new FileReader(test);
+		BufferedReader br = new BufferedReader(fr);
+		FastqReader fqr = new FastqReader(br);
+		
+		FastaRecord a = new FastaRecord(fqr.readRecord());
+	}
+}

@@ -1,0 +1,23 @@
+package weather;
+
+import java.util.ArrayList;
+
+public class Sky {
+	private ArrayList<Cloud> clouds;
+	
+	public Sky() {
+		clouds = new ArrayList<Cloud>(100);
+	}
+	
+	public boolean add(Cloud c) {
+		clouds.add(c);
+	}
+	
+	public float getMeanHeight() {
+		float sum = 0;
+		for(Cloud c: clouds) {
+			sum += c.getHeight();
+		}
+		return sum/clouds.size();
+	}
+}
